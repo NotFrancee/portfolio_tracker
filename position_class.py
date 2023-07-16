@@ -12,7 +12,8 @@ class Position:
         "unit_cost_basis": "Unit Cost Basis",
         "last_price": "Last Price",
         "mkt_value": "Market Value",
-        "realized_pnl": "Realized PnL",
+        "unrealized_pnl": "Unreal. PnL",
+        "realized_pnl": "Real. PnL",
     }
 
     def __init__(self, ticker: str, broker: str, initial_trades: pd.DataFrame):
@@ -91,6 +92,9 @@ class Position:
         current_price = price_data["close"]
         self.last_price = current_price
         self.mkt_value = current_price * self.amount
+
+        # check, might not be correct
+        self.unrealized_pnl = self.mkt_value - self.cost_basis
 
     def __str__(self) -> str:
         res = []
