@@ -4,11 +4,11 @@ from trade_class import Trade
 class Position:
     """Position Object"""
 
-    excel_header = {
+    to_row_columns = {
         "ticker": "Ticker",
-        "pos_amount": "Amount",
-        "total_cost": "Total Cost",
-        "average_cost": "Average Cost",
+        "amount": "Amount",
+        "cost_basis": "Cost Basis",
+        "unit_cost_basis": "Unit Cost Basis",
         "realized_pnl": "Realized PnL",
     }
 
@@ -65,6 +65,6 @@ class Position:
         return "\n".join([res] + data + trades_str)
 
     def to_row(self):
-        res = [getattr(self, key) for key in self.excel_header]
+        res = [getattr(self, key) for key in self.to_row_columns]
 
         return res
