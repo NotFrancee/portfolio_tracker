@@ -11,7 +11,9 @@ class DataHandler:
         self.path = path_to_spreadsheet
         self.wb = openpyxl.load_workbook(path_to_spreadsheet)
 
-    def read_worksheet(self, ws: Worksheet) -> tuple[list[str], list[list[str]]]:
+    def read_worksheet(
+        self, ws: Worksheet
+    ) -> tuple[list[str], list[list[str]]]:
         """Given a worksheeets, reads and returns
         a tuple: (header, data)
 
@@ -28,7 +30,7 @@ class DataHandler:
             row_values = [cell.value for cell in row]
             rows.append(row_values)
 
-        header: list[str] = [x.lower() for x in rows[0]]
+        header: list[str] = [x.lower().replace(" ", "_") for x in rows[0]]
         data: list[list[str]] = rows[1:]
 
         return header, data
@@ -49,8 +51,6 @@ class DataHandler:
         for trade in rows_data:
             trade_data = {header[i]: trade[i] for i in range(len(trade))}
 
-            trade_data["amount"] = float(trade_data["amount"])
-
             trades.append(Trade(trade_data))
 
         return trades
@@ -61,7 +61,7 @@ class DataHandler:
         if positions_ws_name not in self.wb.sheetnames:
             self.wb.create_sheet(positions_ws_name, 0)
             ws = self.wb[positions_ws_name]
-            ws.append(Position.excel_header.values())
+            ws.append(Position.to_row_columns.values())
         else:
             ws = self.wb[positions_ws_name]
             ws.delete_rows(2, ws.max_row)
