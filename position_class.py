@@ -6,15 +6,16 @@ class Position:
 
     to_row_columns = {
         "ticker": "Ticker",
+        "broker": "Broker",
         "amount": "Amount",
         "cost_basis": "Cost Basis",
         "unit_cost_basis": "Unit Cost Basis",
+        "last_price": "Last Price",
+        "mkt_value": "Market Value",
         "realized_pnl": "Realized PnL",
     }
 
-    def __init__(self, ticker: str, initial_trades: pd.DataFrame):
-        # initialize trades df
-
+    def __init__(self, ticker: str, broker: str, initial_trades: pd.DataFrame):
         # self.trades = trades_to_df(initial_trades)
         self.trades = initial_trades.drop("ticker", axis=1)
 
@@ -24,6 +25,10 @@ class Position:
         self.unit_cost_basis = 0
         self.unrealized_pnl = 0
         self.realized_pnl = 0
+        self.broker = broker
+
+        self.last_price = None
+        self.mkt_value = None
 
         self._initialize_position_data()
 
@@ -41,8 +46,6 @@ class Position:
         remaining_quantity = trade.amount
 
         for previous_trade in past_buy_trades.itertuples():
-            print("analyzing one of the previous trades")
-            print(f"\tremaining quantity: {remaining_quantity}")
             if previous_trade.amount <= remaining_quantity:
                 past_buy_trades.loc[previous_trade.Index, "open_amount"] = 0
 
@@ -74,12 +77,8 @@ class Position:
 
         self.amount -= trade.amount
         self.unit_cost_basis = self.cost_basis / self.amount
-        print(past_buy_trades)
 
     def _initialize_position_data(self):
-        print(f"initializing position data for {self.ticker}...")
-        print(self.trades)
-
         for trade in self.trades.itertuples():
             if trade.action == "buy":
                 self._handle_buy_trade(trade)
@@ -87,6 +86,11 @@ class Position:
                 self._handle_sell_trade(trade)
             else:
                 print("invalid action")
+
+    def update_mkt_value(self, price_data):
+        current_price = price_data["close"]
+        self.last_price = current_price
+        self.mkt_value = current_price * self.amount
 
     def __str__(self) -> str:
         res = []
@@ -98,7 +102,8 @@ class Position:
             f"Unit Cost Basis: {self.unit_cost_basis}",
             f"Real. PnL: {self.realized_pnl}",
             f"Unreal. PnL: {self.unrealized_pnl}",
-            "Value: WIP",
+            f"Last Price: {self.last_price}",
+            f"Mkt Value: {self.mkt_value}",
             "TRADES SUMMARY",
         ]
 
