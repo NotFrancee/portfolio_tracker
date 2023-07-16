@@ -27,16 +27,25 @@ class Trade:
 
     def __init__(self, trade_data: dict[str, str]):
         if not self.required_params.issubset(set(trade_data)):
-            raise Exception("you did not provide the required params")
+            raise MissingRequiredParams(self.required_params, set(trade_data))
 
         self.date = trade_data["date"]
         self.ticker = trade_data["ticker"]
         self.action = trade_data["action"].lower()
         self.amount = float(trade_data["amount"])
         self.price = float(trade_data["price"])
-        self.commissions = float(trade_data["commissions"])
+        self.transaction_costs = float(trade_data["transaction_costs"])
 
         self.trade_data = trade_data
+
+        cost_basis = self.amount * self.price
+        if self.action == "sell":
+            cost_basis -= self.transaction_costs
+        else:
+            cost_basis += self.transaction_costs
+        self.cost_basis = cost_basis
+
+        self.unit_cost_basis = self.cost_basis / self.amount
 
     def __str__(self) -> str:
         return "\n".join(
