@@ -1,6 +1,8 @@
 from excel_interface import ExcelInterface
 from position_class import Position
 from trade_class import Trade
+from market_interface import MarketInterface
+from dotenv import load_dotenv
 
 
 class Portfolio:
@@ -10,10 +12,21 @@ class Portfolio:
     """
 
     def __init__(self):
+        load_dotenv()
         self.data_handler = ExcelInterface("portfolio.xlsx")
+        self.market_interface = MarketInterface()
 
         self.trades = self.data_handler.retrieve_trades()
         self.positions: dict[str, Position] = {}
+
+        self._initialize_portfolio()
+
+    def _initialize_portfolio(self):
+        print("initializing portfolio...")
+        self.compute_positions()
+        self.update_live_prices()
+        self.data_handler.dump_positions(self.positions.values())
+        print("...initialized portfolio!")
 
     def compute_positions(self):
         trades_df = Trade.trades_to_df(self.trades)
@@ -22,10 +35,21 @@ class Portfolio:
 
         for ticker in tickers:
             ticker_trades = trades_df[trades_df["ticker"] == ticker]
-            position = Position(ticker, ticker_trades)
+            position = Position(ticker, "IBKR", ticker_trades)
 
             self.positions[ticker] = position
 
-        self.data_handler.dump_positions(self.positions.values())
+        print("\tcomputed positions...")
 
-        print("updated positions!")
+    def update_live_prices(self):
+        print("\tupdating mkt prices...")
+        tickers = list(self.positions.keys())
+
+        price_data = self.market_interface.get_stocks_prices(
+            tickers, start="2020-1-1"
+        )
+
+        for ticker, position in self.positions.items():
+            current_price = price_data.iloc[-1].loc[ticker, :]
+
+            position.update_mkt_value(current_price)
