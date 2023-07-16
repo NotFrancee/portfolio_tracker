@@ -48,9 +48,18 @@ class Trade:
         self.unit_cost_basis = self.cost_basis / self.amount
 
     def __str__(self) -> str:
-        return "\n".join(
-            [f"{key}: {value}" for key, value in self.trade_data.items()]
+        res = []
+        res.append(
+            f"Summary for {self.ticker} {self.action.upper()} trade on {self.date}"
         )
+        res.append(
+            f"{self.amount} @ {self.price} (transaction costs: {self.transaction_costs})"
+        )
+        res.append(
+            f"\tTotal Cost Basis: {self.cost_basis}\n\tUnit Cost Basis: {self.unit_cost_basis}"
+        )
+
+        return "\n".join(res)
 
     def to_row(self) -> list:
         res = [getattr(self, key) for key in self.to_row_columns]

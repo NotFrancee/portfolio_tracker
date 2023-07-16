@@ -1,4 +1,3 @@
-from trade_class import Trade
 import pandas as pd
 
 
@@ -17,7 +16,7 @@ class Position:
         # initialize trades df
 
         # self.trades = trades_to_df(initial_trades)
-        self.trades = initial_trades
+        self.trades = initial_trades.drop("ticker", axis=1)
 
         self.ticker = ticker
         self.amount = 0
@@ -89,31 +88,23 @@ class Position:
             else:
                 print("invalid action")
 
-    def new_trade(self, trade: Trade):
-        self.trades_df.loc[trade.date] = trade.to_row()
-
-        self.refresh()
-
-    def refresh(self):
-        print("refreshing position...", end="")
-        self._initialize_position_data()
-        print("...done")
-
     def __str__(self) -> str:
-        res = f"Summary for Position on {self.ticker}"
+        res = []
+        res.append(f"Summary for Position on {self.ticker}")
 
-        data = [
+        res += [
             f"Amount: {self.amount}",
             f"Cost Basis: {self.cost_basis}",
             f"Unit Cost Basis: {self.unit_cost_basis}",
             f"Real. PnL: {self.realized_pnl}",
             f"Unreal. PnL: {self.unrealized_pnl}",
             "Value: WIP",
+            "TRADES SUMMARY",
         ]
 
-        # trades_str = [str(trade) for trade in self.trades.iterrows()]
+        res.append(self.trades.to_string())
 
-        return "\n".join([res] + data)
+        return "\n".join(res)
 
     def to_row(self):
         res = [getattr(self, key) for key in self.to_row_columns]
