@@ -15,28 +15,16 @@ class Portfolio:
         self.trades = self.data_handler.retrieve_trades()
         self.positions: dict[str, Position] = {}
 
-    def create_new_position(self, initial_trade: Trade):
-        ticker = initial_trade.ticker
-        position = Position(ticker, initial_trades=[initial_trade])
-
-        self.positions[ticker] = position
-
-    def update_position(self, trade: Trade):
-        position = self.positions[trade.ticker]
-
-        # TODO
-
     def compute_positions(self):
-        trades = self.trades
-        if len(trades) == 0:
-            print("there are no trades.")
-            return
+        trades_df = Trade.trades_to_df(self.trades)
 
-        for trade in trades:
-            if trade.ticker in self.positions:
-                self.update_position(trade)
-            else:
-                self.create_new_position(trade)
+        tickers = trades_df["ticker"].unique()
+
+        for ticker in tickers:
+            ticker_trades = trades_df[trades_df["ticker"] == ticker]
+            position = Position(ticker, ticker_trades)
+
+            self.positions[ticker] = position
 
         self.data_handler.dump_positions(self.positions.values())
 
