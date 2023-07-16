@@ -4,7 +4,7 @@ from trade_class import Trade
 from position_class import Position
 
 
-class DataHandler:
+class ExcelInterface:
     """handles data in the excel spreadsheet"""
 
     def __init__(self, path_to_spreadsheet: str) -> None:

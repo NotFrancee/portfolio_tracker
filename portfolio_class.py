@@ -1,4 +1,4 @@
-from data_handler import DataHandler
+from excel_interface import ExcelInterface
 from position_class import Position
 from trade_class import Trade
 
@@ -10,7 +10,7 @@ class Portfolio:
     """
 
     def __init__(self):
-        self.data_handler = DataHandler("portfolio.xlsx")
+        self.data_handler = ExcelInterface("portfolio.xlsx")
 
         self.trades = self.data_handler.retrieve_trades()
         self.positions: dict[str, Position] = {}
