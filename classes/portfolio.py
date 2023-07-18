@@ -35,7 +35,7 @@ class Portfolio:
 
         for ticker in tickers:
             ticker_trades = trades_df[trades_df["ticker"] == ticker]
-            position = Position(ticker, "IBKR", "EUR", ticker_trades)
+            position = Position(ticker, "NYSE", "IBKR", "EUR", ticker_trades)
 
             self.positions[ticker] = position
 

@@ -21,6 +21,7 @@ class Position:
     def __init__(
         self,
         ticker: str,
+        exchange_code: str,
         broker: str,
         currency: str,
         initial_trades: pd.DataFrame,
@@ -29,6 +30,7 @@ class Position:
         self.trades = initial_trades.drop("ticker", axis=1)
 
         self.ticker = ticker
+        self.exchange_code = exchange_code
         self.currency = currency
         self.amount = 0
         self.cost_basis = 0
@@ -112,7 +114,7 @@ class Position:
         res.append(f"Summary for Position on {self.ticker}")
 
         res += [
-            f"{value}: {getattr(self, key)}"
+            f"\t{value}: {getattr(self, key)}"
             for key, value in self.to_row_columns.items()
         ]
 
