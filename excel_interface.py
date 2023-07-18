@@ -1,7 +1,7 @@
 import openpyxl
 from openpyxl.worksheet.worksheet import Worksheet
-from trade_class import Trade
-from position_class import Position
+from classes.trade import Trade
+from classes.position import Position
 
 
 class ExcelInterface:

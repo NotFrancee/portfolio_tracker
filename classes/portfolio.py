@@ -1,6 +1,6 @@
 from excel_interface import ExcelInterface
-from position_class import Position
-from trade_class import Trade
+from classes.position import Position
+from classes.trade import Trade
 from market_interface import MarketInterface
 from dotenv import load_dotenv
 
