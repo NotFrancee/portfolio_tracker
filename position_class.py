@@ -7,6 +7,7 @@ class Position:
     to_row_columns = {
         "ticker": "Ticker",
         "broker": "Broker",
+        "currency": "Currency",
         "amount": "Amount",
         "cost_basis": "Cost Basis",
         "unit_cost_basis": "Unit Cost Basis",
@@ -14,13 +15,21 @@ class Position:
         "mkt_value": "Market Value",
         "unrealized_pnl": "Unreal. PnL",
         "realized_pnl": "Real. PnL",
+        "is_open": "Active",
     }
 
-    def __init__(self, ticker: str, broker: str, initial_trades: pd.DataFrame):
+    def __init__(
+        self,
+        ticker: str,
+        broker: str,
+        currency: str,
+        initial_trades: pd.DataFrame,
+    ):
         # self.trades = trades_to_df(initial_trades)
         self.trades = initial_trades.drop("ticker", axis=1)
 
         self.ticker = ticker
+        self.currency = currency
         self.amount = 0
         self.cost_basis = 0
         self.unit_cost_basis = 0
@@ -32,6 +41,8 @@ class Position:
         self.mkt_value = None
 
         self._initialize_position_data()
+
+        self.is_open = self.amount != 0
 
     def _handle_buy_trade(self, trade):
         self.cost_basis += trade.cost_basis
