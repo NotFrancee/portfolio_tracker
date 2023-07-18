@@ -101,17 +101,16 @@ class Position:
         res.append(f"Summary for Position on {self.ticker}")
 
         res += [
-            f"Amount: {self.amount}",
-            f"Cost Basis: {self.cost_basis}",
-            f"Unit Cost Basis: {self.unit_cost_basis}",
-            f"Real. PnL: {self.realized_pnl}",
-            f"Unreal. PnL: {self.unrealized_pnl}",
-            f"Last Price: {self.last_price}",
-            f"Mkt Value: {self.mkt_value}",
-            "TRADES SUMMARY",
+            f"{value}: {getattr(self, key)}"
+            for key, value in self.to_row_columns.items()
         ]
 
+        res.append("-" * 100)
+        res.append("Trades")
+
         res.append(self.trades.to_string())
+
+        res.append("=" * 100)
 
         return "\n".join(res)
 
