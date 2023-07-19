@@ -131,3 +131,8 @@ class Position:
         res = [getattr(self, key) for key in self.to_row_columns]
 
         return res
+
+    def to_dict(self):
+        res = {key: getattr(self, key) for key in self.to_row_columns}
+
+        return res

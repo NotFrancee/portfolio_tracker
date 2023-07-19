@@ -1,3 +1,6 @@
+import pandas as pd
+import json
+import os
 from excel_interface import ExcelInterface
 from classes.position import Position
 from classes.trade import Trade
@@ -53,3 +56,33 @@ class Portfolio:
             current_price = price_data.iloc[-1].loc[ticker, :]
 
             position.update_mkt_value(current_price)
+
+    def _create_portfolio_snapshot(self, portfolio_history: dict[str, str]):
+        self.update_live_prices()
+
+        date = pd.Timestamp.today().strftime("%m/%d/%y")
+
+        positions_data = {
+            key: position.to_dict() for key, position in self.positions.items()
+        }
+
+        portfolio_history[date] = positions_data
+
+    def update_portfolio_history(self):
+        try:
+            with open("portfolio_history.json", "r+", encoding="utf-8") as f:
+                portfolio_history = json.load(f)
+                self._create_portfolio_snapshot(portfolio_history)
+
+                json.dump(portfolio_history, f)
+
+        except FileNotFoundError:
+            with open("portfolio_history.json", "w", encoding="utf-8") as f:
+                portfolio_history = dict()
+                self._create_portfolio_snapshot(portfolio_history)
+
+                json.dump(portfolio_history, f)
+
+    def reset_portfolio_history(self):
+        os.remove("./portfolio_history.json")
+        print("successfully reset portfolio history.")
