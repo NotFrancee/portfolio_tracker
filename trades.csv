@@ -1,6 +1,6 @@
-﻿Date,Name,Ticker,Exchange,Broker,Action,Currency,Amount,Price,Notional,Transaction Costs,Notes
-12/07/2023,Apple,AAPL,NYSE,IBKR,Buy,USD,30,150.5,4515,1,Sold for profit
-15/07/2023,Apple,AAPL,NYSE,IBKR,Buy,USD,50,130.5,6525,1,
-17/07/2023,Apple,AAPL,NYSE,IBKR,Sell,USD,60,140,8400,1,Sold for profit
-17/07/2023,GameStop,GME,NYSE,IBKR,Buy,USD,10,100,1000,2,Speculative
-23/08/2023,Disney,DIS,NYSE,IBKR,Buy,USD,290,86.15,24983.5,124.9175,
+﻿Date,Name,Ticker,Exchange,Broker,Action,Currency,Amount,Price,Notional,Transaction Costs,Cost Basis,Unit Cost Basis ,Notes
+7/12/2023,Apple,AAPL,NYSE,IBKR,Buy,USD,30,150.5,4515,1,4516,150.5333333,Sold for profit
+7/15/2023,Apple,AAPL,NYSE,IBKR,Buy,USD,50,130.5,6525,1,6526,130.52,
+7/17/2023,Apple,AAPL,NYSE,IBKR,Sell,USD,60,140,8400,1,8401,140.0166667,Sold for profit
+7/17/2023,GameStop,GME,NYSE,IBKR,Buy,USD,10,100,1000,2,1002,100.2,Speculative
+8/23/2023,Disney,DIS,NYSE,IBKR,Buy,USD,290,86.15,24983.5,124.9175,25108.4175,86.58075,

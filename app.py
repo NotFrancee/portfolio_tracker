@@ -4,3 +4,4 @@ portfolio = Portfolio()
 
 pos = portfolio.positions["AAPL"]
 print(pos)
+

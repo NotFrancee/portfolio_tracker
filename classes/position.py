@@ -22,37 +22,42 @@ class Position:
     def __init__(
         self,
         ticker: str,
-        exchange: str,
-        broker: str,
-        currency: str,
         initial_trades: pd.DataFrame,
     ):
-        # self.trades = trades_to_df(initial_trades)
-        self.trades = initial_trades.drop("ticker", axis=1)
-
+        self.trades = initial_trades.copy()
         self.ticker = ticker
-        self.exchange = exchange
-        self.currency = currency
+
+        self.currency, self.exchange, self.broker = self._initialize_position_data(initial_trades)
+
+        # initializing the other variables
         self.amount = 0
         self.cost_basis = 0
         self.unit_cost_basis = 0
         self.unrealized_pnl = 0
         self.realized_pnl = 0
-        self.broker = broker
 
         self.last_price = None
         self.mkt_value = None
 
-        self._initialize_position_data()
+        self._initialize_position_value()
 
         self.is_open = self.amount != 0
 
+    def _initialize_position_data(self, initial_trades) -> tuple[str]: 
+        currency = initial_trades["currency"].iloc[0]
+        exchange = initial_trades["exchange"].iloc[0]
+        broker = initial_trades["broker"].iloc[0]
+
+        return currency, exchange, broker
+
     def _handle_buy_trade(self, trade):
+        print(trade)
         self.cost_basis += trade.cost_basis
         self.amount += trade.amount
         self.unit_cost_basis = self.cost_basis / self.amount
 
     def _handle_sell_trade(self, trade):
+        # filter for previous buy trades that have an open amount
         past_buy_trades: pd.DataFrame = self.trades[
             (self.trades.index < trade.Index)
             & (self.trades["action"] == "buy")
@@ -60,12 +65,11 @@ class Position:
         ]
 
         remaining_quantity = trade.amount
-
         trade_pnl = 0
 
         for previous_trade in past_buy_trades.itertuples():
             if previous_trade.amount <= remaining_quantity:
-                past_buy_trades.loc[previous_trade.Index, "open_amount"] = 0
+                self.trades.loc[previous_trade.Index, "open_amount"] = 0
 
                 remaining_quantity -= previous_trade.amount
 
@@ -76,7 +80,7 @@ class Position:
                 self.unrealized_pnl -= trade_pnl
 
             else:
-                past_buy_trades.loc[
+                self.trades.loc[
                     previous_trade.Index, "open_amount"
                 ] -= remaining_quantity
 
@@ -96,8 +100,12 @@ class Position:
         self.amount -= trade.amount
         self.unit_cost_basis = self.cost_basis / self.amount
 
-    def _initialize_position_data(self):
+        print('finished sell trade. now trades are', self.trades)
+
+    def _initialize_position_value(self):
         for trade in self.trades.itertuples():
+            print(trade)
+
             if trade.action == "buy":
                 self._handle_buy_trade(trade)
             elif trade.action == "sell":
@@ -131,7 +139,3 @@ class Position:
 
         return "\n".join(res)
 
-    def to_row(self):
-        res = [getattr(self, key) for key in self.to_row_columns]
-
-        return res
