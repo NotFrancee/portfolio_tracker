@@ -47,6 +47,7 @@ class Portfolio:
         print("\tcomputed positions...")
         return positions
 
+    # TODO
     def update_live_data(self):
         print("\tupdating mkt prices...")
 
@@ -62,3 +63,11 @@ class Portfolio:
             current_price = price_data.iloc[-1].loc[ticker, :]
 
             position.update_mkt_value(current_price)
+
+    # TODO
+    def display_summary(self, type: str): 
+        print('PORTFOLIO SUMMARY')
+        print(self.positions)
+
+        for position in self.positions: 
+            print(position)
