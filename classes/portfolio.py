@@ -1,4 +1,3 @@
-from excel_interface import ExcelInterface
 from classes.position import Position
 from classes.trade import Trade
 from market_interface import MarketInterface
@@ -13,7 +12,6 @@ class Portfolio:
 
     def __init__(self):
         load_dotenv()
-        self.data_handler = ExcelInterface("portfolio.xlsx")
         self.market_interface = MarketInterface()
 
         self.trades = self.data_handler.retrieve_trades()
