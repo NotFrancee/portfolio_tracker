@@ -15,6 +15,7 @@ class Position:
         "last_price": "Last Price",
         "mkt_value": "Market Value",
         "unrealized_pnl": "Unreal. PnL",
+        "unrealized_pnl_perc": "Unreal. PnL (%)",
         "realized_pnl": "Real. PnL",
         "is_open": "Active",
     }
@@ -38,6 +39,7 @@ class Position:
         self.cost_basis = 0
         self.unit_cost_basis = 0
         self.unrealized_pnl = 0
+        self.unrealized_pnl_perc = None
         self.realized_pnl = 0
 
         self.last_price = None
@@ -124,6 +126,7 @@ class Position:
 
         # check, might not be correct
         self.unrealized_pnl = self.mkt_value - self.cost_basis
+        self.unrealized_pnl_perc = (self.mkt_value / self.cost_basis - 1) * 100
 
     def to_row(self):
         return [getattr(self, key) for key in self.to_row_columns]
