@@ -86,3 +86,14 @@ class Portfolio:
         positions_df = self.generate_positions_df()
 
         print(positions_df.to_string())
+
+    def new_trade(self, trade_data):
+        trade = Trade(trade_data)
+        print(self.trades)
+        print("total cols: ", len(self.trades.columns))
+        print("total cols: ", len(trade.to_row()))
+        print("now adding\n", trade)
+
+        self.trades.add(trade.to_row())
+
+        print(self.trades)
