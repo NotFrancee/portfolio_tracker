@@ -1,33 +1,73 @@
 # Import the necessary packages
-from consolemenu import *
-from consolemenu.items import *
+from consolemenu import Screen, ConsoleMenu
+from consolemenu.items import FunctionItem, SubmenuItem
+from consolemenu.prompt_utils import PromptUtils
+from classes.portfolio import Portfolio
 
-# Create the menu
-menu = ConsoleMenu("Portfolio Tracker ", "Subtitle")
 
-# Create some items
+def new_trade_action():
+    print("Process new trade here")
+    PromptUtils(Screen()).enter_to_continue()
 
-# MenuItem is the base class for all items, it doesn't do anything when selected
-menu_item = MenuItem("Menu Item")
 
-# A FunctionItem runs a Python function when selected
-function_item = FunctionItem("Call a Python function", input, ["Enter an input"])
+def delete_trade_action():
+    print("Process delete trade here")
+    PromptUtils(Screen()).enter_to_continue()
 
-# A CommandItem runs a console command
-command_item = CommandItem("Run a console command",  "touch hello.txt")
 
-# A SelectionMenu constructs a menu from a list of strings
-selection_menu = SelectionMenu(["item1", "item2", "item3"])
+def get_portfolio_summary_action(portfolio: Portfolio):
+    portfolio.display_summary("basic")
+    PromptUtils(Screen()).enter_to_continue()
 
-# A SubmenuItem lets you add a menu (the selection_menu above, for example)
-# as a submenu of another menu
-submenu_item = SubmenuItem("Submenu item", selection_menu, menu)
 
-# Once we're done creating them, we just add the items to the menu
-menu.append_item(menu_item)
-menu.append_item(function_item)
-menu.append_item(command_item)
-menu.append_item(submenu_item)
+class App:
+    """Class for the main menu of the app"""
 
-# Finally, we call show to show the menu and allow the user to interact
-menu.show()
+    menu = None
+
+    def initialize_menu(self):
+        self.menu = ConsoleMenu(
+            "Portfolio Tracker ", "Welcome to the portfolio tracker"
+        )
+
+    def create_edit_submenu(self):
+        # create the menu to edit data
+        edit_data = ConsoleMenu(
+            "Edit Data", "Edit, add or delete data from the db"
+        )
+
+        new_trade = FunctionItem("New Trade", new_trade_action)
+        delete_trade = FunctionItem("Edit Trade", delete_trade_action)
+
+        edit_data.append_item(new_trade)
+        edit_data.append_item(delete_trade)
+
+        edit_data_submenu_item = SubmenuItem("Edit Data", edit_data, self.menu)
+
+        self.menu.append_item(edit_data_submenu_item)
+
+    def create_summary_item(self):
+        get_summary = FunctionItem(
+            "See Portfolio Summary",
+            get_portfolio_summary_action,
+            [self.portfolio],
+        )
+
+        self.menu.append_item(get_summary)
+
+    def start(self) -> None:
+        self.initialize_menu()
+        self.create_edit_submenu()
+        self.create_summary_item()
+
+        # Finally, we call show to show the menu and allow the user to interact
+        self.menu.start()
+        self.menu.join()
+
+    def __init__(self) -> None:
+        self.portfolio = Portfolio()
+
+
+app = App()
+
+app.start()
