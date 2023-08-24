@@ -3,11 +3,7 @@ from consolemenu import Screen, ConsoleMenu
 from consolemenu.items import FunctionItem, SubmenuItem
 from consolemenu.prompt_utils import PromptUtils
 from classes.portfolio import Portfolio
-
-
-def new_trade_action():
-    print("Process new trade here")
-    PromptUtils(Screen()).enter_to_continue()
+from app.new_trade import new_trade_action
 
 
 def delete_trade_action():
@@ -16,7 +12,7 @@ def delete_trade_action():
 
 
 def get_portfolio_summary_action(portfolio: Portfolio):
-    portfolio.display_summary("basic")
+    portfolio.display_summary()
     PromptUtils(Screen()).enter_to_continue()
 
 
@@ -36,7 +32,9 @@ class App:
             "Edit Data", "Edit, add or delete data from the db"
         )
 
-        new_trade = FunctionItem("New Trade", new_trade_action)
+        new_trade = FunctionItem(
+            "New Trade", new_trade_action, [self.portfolio]
+        )
         delete_trade = FunctionItem("Edit Trade", delete_trade_action)
 
         edit_data.append_item(new_trade)
