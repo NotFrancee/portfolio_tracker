@@ -125,6 +125,9 @@ class Position:
         # check, might not be correct
         self.unrealized_pnl = self.mkt_value - self.cost_basis
 
+    def to_row(self):
+        return [getattr(self, key) for key in self.to_row_columns]
+
     def __str__(self) -> str:
         res = []
         res.append(f"Summary for Position on {self.ticker}")

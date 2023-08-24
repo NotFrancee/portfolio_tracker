@@ -1,5 +1,4 @@
 from classes.position import Position
-from classes.trade import Trade
 from market_interface import MarketInterface
 from dotenv import load_dotenv
 import pandas as pd
@@ -67,10 +66,24 @@ class Portfolio:
 
             position.update_mkt_value(current_price)
 
-    # TODO
-    def display_summary(self, type: str): 
-        print('PORTFOLIO SUMMARY')
-        print(self.positions)
+    def generate_positions_df(self):
+        df_base = {
+            ticker: position.to_row()
+            for ticker, position in self.positions.items()
+        }
 
-        for position in self.positions: 
-            print(position)
+        df = pd.DataFrame(
+            df_base.values(),
+            index=df_base.keys(),
+            columns=Position.to_row_columns.values(),
+        )
+
+        return df.drop("Ticker", axis=1)
+
+    # TODO
+    def display_summary(self, type: str):
+        print("PORTFOLIO SUMMARY")
+
+        positions_df = self.generate_positions_df()
+
+        print(positions_df.to_string())
