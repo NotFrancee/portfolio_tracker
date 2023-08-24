@@ -27,7 +27,11 @@ class Position:
         self.trades = initial_trades.copy()
         self.ticker = ticker
 
-        self.currency, self.exchange, self.broker = self._initialize_position_data(initial_trades)
+        (
+            self.currency,
+            self.exchange,
+            self.broker,
+        ) = self._initialize_position_data(initial_trades)
 
         # initializing the other variables
         self.amount = 0
@@ -43,7 +47,7 @@ class Position:
 
         self.is_open = self.amount != 0
 
-    def _initialize_position_data(self, initial_trades) -> tuple[str]: 
+    def _initialize_position_data(self, initial_trades) -> tuple[str]:
         currency = initial_trades["currency"].iloc[0]
         exchange = initial_trades["exchange"].iloc[0]
         broker = initial_trades["broker"].iloc[0]
@@ -100,7 +104,7 @@ class Position:
         self.amount -= trade.amount
         self.unit_cost_basis = self.cost_basis / self.amount
 
-        print('finished sell trade. now trades are', self.trades)
+        print("finished sell trade. now trades are", self.trades)
 
     def _initialize_position_value(self):
         for trade in self.trades.itertuples():
@@ -138,4 +142,3 @@ class Position:
         res.append("=" * 100)
 
         return "\n".join(res)
-
