@@ -1,4 +1,5 @@
 from classes.position import Position
+from classes.trade import Trade
 from market_interface import MarketInterface
 from dotenv import load_dotenv
 import pandas as pd
@@ -15,7 +16,7 @@ class Portfolio:
         self.market_interface = MarketInterface()
 
         self.trades = self._load_trades("trades.csv")
-        self.positions = self._load_positions()
+        self.positions: dict[str, Position] = self._load_positions()
 
         self.update_live_data()
 
@@ -37,7 +38,7 @@ class Portfolio:
         positions = {}
 
         # finds all the tickers
-        tickers = trades["ticker"].unique()
+        tickers: list[str] = trades["ticker"].unique()
 
         for ticker in tickers:
             # filters all the trades for that ticker and creates the position
@@ -53,8 +54,6 @@ class Portfolio:
     def update_live_data(self):
         print("\tupdating mkt prices...")
 
-        print("wip, TODO")
-        return
         tickers = list(self.positions.keys())
 
         price_data = self.market_interface.get_stocks_prices(
@@ -81,7 +80,7 @@ class Portfolio:
         return df.drop("Ticker", axis=1)
 
     # TODO
-    def display_summary(self, type: str):
+    def display_summary(self):
         print("PORTFOLIO SUMMARY")
 
         positions_df = self.generate_positions_df()
