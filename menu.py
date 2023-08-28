@@ -88,6 +88,7 @@ class Menu:
         for i, option in enumerate(self.options):
             self.console.print(f"[bold]{i})[/bold] {option}")
 
+    def get_function(self, choice: str):
         """Converts the choice to the function to call. This function recognizes whether the user specified the index of the option 
         or the name of the option itself
         """
@@ -130,10 +131,10 @@ class Menu:
 
             # prompts the user for the option and calls the function
             try:
-                input_prompt = Markdown("*What do you want to do?*")
+                input_prompt = Markdown("_What do you want to do?_")
                 choice = self.console.input(input_prompt)
 
-                func = self.convert_to_int(choice)
+                func = self.get_function(choice)
                 func()
 
             except OutOfIndexError:
