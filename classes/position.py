@@ -148,3 +148,6 @@ class Position:
         res.append("=" * 100)
 
         return "\n".join(res)
+
+    def to_dict(self):
+        return {key: getattr(self, key) for key in self.to_row_columns}

@@ -13,6 +13,7 @@ def delete_trade_action():
 
 def get_portfolio_summary_action(portfolio: Portfolio):
     portfolio.display_summary()
+    portfolio.dump_daily_data()
     PromptUtils(Screen()).enter_to_continue()
 
 

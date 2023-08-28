@@ -113,3 +113,40 @@ class Portfolio:
 
         return cost_basis, market_value, unrealized_pnl, real_pnl
 
+    def load_hist_data(self):
+        try:
+            with open("portfolio_hist_data.pickle", "rb") as f:
+                data = pickle.load(f)
+        except:
+            data = {}
+
+        return data
+
+    def dump_daily_data(self):
+        data = self.load_hist_data()
+        self.update_live_data()
+        (
+            cost_basis,
+            market_value,
+            unrealized_pnl,
+            real_pnl,
+        ) = self.calculate_portfolio_value()
+
+        portfolio_data = {
+            "positions": {
+                ticker: position.to_dict()
+                for ticker, position in self.positions.items()
+            },
+            "portfolio_value": market_value,
+            "cost_basis": cost_basis,
+            "realized_pnl": real_pnl,
+            "unrealized_pnl": unrealized_pnl,
+        }
+
+        today = pd.Timestamp.today().date()
+
+        with open("portfolio_hist_data.pickle", "ab") as f:
+            data[today.strftime("%Y-%m-%d")] = portfolio_data
+
+            pickle.dump(data, f)
+            print("Dumped Data\n", data)
