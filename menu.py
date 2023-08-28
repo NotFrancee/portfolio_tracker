@@ -42,6 +42,30 @@ class Menu:
         
         return False
 
+    # TODO
+    def press_enter_to_continue(self): 
+        enter_pressed = False
+        self.console.print(Markdown('_Press Enter to continue_'))
+
+        while not enter_pressed: 
+            print('current state of the variable', enter_pressed)
+
+            def on_press(key: keyboard.Key): 
+                print(key)
+                if key == keyboard.Key.enter: 
+                    print('enter key presse 2 ')
+                    enter_pressed = True
+                    kb_listener.stop()
+            
+            with keyboard.Listener(on_press=on_press) as kb_listener: 
+                kb_listener.join()
+
+            # kb_listener = keyboard.Listener(on_press=on_press)
+            # kb_listener.start()
+            # kb_listener.join()
+                
+            print('fasdfasfasfasfsfdaaf')
+
     def print_options(self):
         for i, option in enumerate(self.options):
             self.console.print(f"[bold]{i})[/bold] {option}")
