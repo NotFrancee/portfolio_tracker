@@ -8,33 +8,49 @@ import time
 from classes.portfolio import Portfolio
 
 class OutOfIndexError(Exception):
+    """Exception to use when the index specified for the menu is out of range"""
     pass
 
 class OptionNotFoundError(Exception): 
+    """Exception to use when the option specified is not in the options list"""
     pass
 
 class Menu:
+    """Class component for Menus"""
+
     title_style = Style(bold=True, color="red")
 
     def __init__(
         self, console: Console, title: str, options: dict[str, callable]
     ) -> None:
+        """Inits the class. The function needs 
+        i) the console object from the rich package, 
+        ii) the title of the menu, 
+        iii) the dictionary with option names and the function to call
+        """
+        
         self.console = console
         self.title = title
         self.options = options | {'Quit': self.quit}
 
         self.should_quit = False
 
-    def clear_screen(self): 
+    def clear_screen(self):
+        """Clears the screen, reprinting the main title of the program and the title of the menu"""
+
         os.system('cls')
         self.console.print(self.title, style=self.title_style)
         self.console.print(Markdown("# Portfolio Tracker tool"))
 
-    def quit(self): 
+    def quit(self):
+        """Quits the program"""
+
         print('Thanks! Quitting the program')
         self.should_quit = True
 
-    def should_continue(self): 
+    def should_continue(self):
+        """Prompts the user on whether he wants to do another action on the menu"""
+
         response = self.console.input('Want to do something else? (y/N)')
 
         if response.strip().lower() == 'y': 
@@ -67,43 +83,59 @@ class Menu:
             print('fasdfasfasfasfsfdaaf')
 
     def print_options(self):
+        """Displays all the available options to the user"""
+
         for i, option in enumerate(self.options):
             self.console.print(f"[bold]{i})[/bold] {option}")
 
-    def convert_to_int(self, choice: str):
+        """Converts the choice to the function to call. This function recognizes whether the user specified the index of the option 
+        or the name of the option itself
+        """
+
         key = None
+        # creates two lists so that the user can ignore case when specifying the option
         options_as_arr = list(self.options)
         options_as_arr_lower = [option.lower() for option in options_as_arr]
 
+        # if the choice is numeric, this means the user specified the index of the option
         if choice.isnumeric(): 
             choice_index = int(choice)
 
+            # if the index speicified is too large, raise an Exception
             if choice_index >= len(self.options): 
                 raise OutOfIndexError()
 
             key = options_as_arr[choice_index]
 
+        # else, it means the user specified the name of the option
         else: 
+            # if the option is not present in the list of keys, raise an Exception
             if choice.lower() not in options_as_arr_lower:
                 raise OptionNotFoundError()
             
+            # the key must be case-sensitive to retrieve the function, so get the index from the list of lowercase options
             key = options_as_arr[options_as_arr_lower.index(choice.lower())]
 
+        # select and return the corresponding function
         corresponding_func = self.options[key]
         return corresponding_func
 
     def run(self):
+        """Shows and runs the menu"""
+
         while True:
+            # clears the screen and shows the options to the user
             self.clear_screen()
             self.print_options()
 
+            # prompts the user for the option and calls the function
             try:
                 input_prompt = Markdown("*What do you want to do?*")
                 choice = self.console.input(input_prompt)
 
                 func = self.convert_to_int(choice)
                 func()
-                print('executed fucntion')
+
             except OutOfIndexError:
                 print('Index is out of range for the available options. Please try again with a smaller number')
                 time.sleep(3)
@@ -113,16 +145,19 @@ class Menu:
                 time.sleep(3)
                 continue
             
-            # check if the program should end no matter what; if not, prompt the user on whether he wants to continue
+            # check if the user chose to quit; if not, prompt the user on whether he wants to continue
             if not self.should_quit and self.should_continue(): 
                 continue
-            else: 
-                break
+            
+            break
 
 
 class App():
-    
+    """Class for the main App"""
+
     def __init__(self) -> None:
+        """Here, specify the various menu options and initialize the variables"""
+
         self.main_menu_options = {"See Data": self.see_data, "Edit Data": self.edit_data}
 
         self.portfolio = Portfolio()
@@ -130,12 +165,17 @@ class App():
         self.main_menu = Menu(self.console, "Main Menu", self.main_menu_options)
 
     def see_data(self): 
+        """Function to visualize data about the portfolio"""
+
         self.portfolio.display_summary()
 
     def edit_data(self): 
+        """Function to edit the portfolio by adding trades"""
         print('WIP')
 
     def run(self): 
+        """Runs the app"""
+
         self.main_menu.run()
 
 
