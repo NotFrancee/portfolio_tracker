@@ -3,6 +3,19 @@ from classes.trade import Trade
 from market_interface import MarketInterface
 from dotenv import load_dotenv
 import pandas as pd
+import pickle
+from tabulate import tabulate
+
+EMAIL_TEMPLATE = """
+Portfolio summary for {date}
+
+Positions
+{positions_table}
+
+Trades
+{trades_table}
+
+"""
 
 
 class Portfolio:
@@ -81,11 +94,7 @@ class Portfolio:
 
     # TODO
     def display_summary(self):
-        print("PORTFOLIO SUMMARY")
-
-        positions_df = self.generate_positions_df()
-
-        print(positions_df.to_string())
+        print(self.generate_email_body())
 
     def new_trade(self, trade_data):
         trade = Trade(trade_data)
@@ -97,6 +106,30 @@ class Portfolio:
         self.trades.add(trade.to_row())
 
         print(self.trades)
+
+    def generate_email_body(self):
+        position_columns = [
+            "Amount",
+            "Cost Basis",
+            "Unit Cost Basis",
+            "Last Price",
+            "Market Value",
+            "Unreal. PnL",
+            "Unreal. PnL (%)",
+        ]
+
+        date = pd.Timestamp.today().date()
+        positions = self.generate_positions_df()[position_columns]
+        positions_table = tabulate(positions, headers="keys")
+        trades_table = tabulate(self.trades, headers="keys")
+
+        email_body = EMAIL_TEMPLATE.format(
+            positions_table=positions_table,
+            trades_table=trades_table,
+            date=date,
+        )
+
+        return email_body
 
     def calculate_portfolio_value(self):
         cost_basis = 0
