@@ -97,3 +97,19 @@ class Portfolio:
         self.trades.add(trade.to_row())
 
         print(self.trades)
+
+    def calculate_portfolio_value(self):
+        cost_basis = 0
+        market_value = 0
+        real_pnl = 0
+
+        for position in self.positions.values():
+            print(position)
+            cost_basis += position.cost_basis
+            market_value += position.mkt_value
+            real_pnl += position.realized_pnl
+
+        unrealized_pnl = market_value - real_pnl
+
+        return cost_basis, market_value, unrealized_pnl, real_pnl
+
