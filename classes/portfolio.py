@@ -63,7 +63,6 @@ class Portfolio:
         print("\tcomputed positions...")
         return positions
 
-    # TODO
     def update_live_data(self):
         print("\tupdating mkt prices...")
 
