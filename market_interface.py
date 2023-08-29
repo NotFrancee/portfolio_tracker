@@ -33,7 +33,7 @@ class MarketInterface:
 
         d = dict()
 
-        print("\tretrieving prices: ", end="")
+        print("\tretrieving prices:", end=" ")
 
         for ticker in tickers:
             print(ticker, end=" ")

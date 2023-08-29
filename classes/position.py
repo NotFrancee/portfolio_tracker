@@ -57,7 +57,6 @@ class Position:
         return currency, exchange, broker
 
     def _handle_buy_trade(self, trade):
-        print(trade)
         self.cost_basis += trade.cost_basis
         self.amount += trade.amount
         self.unit_cost_basis = self.cost_basis / self.amount
@@ -106,12 +105,8 @@ class Position:
         self.amount -= trade.amount
         self.unit_cost_basis = self.cost_basis / self.amount
 
-        print("finished sell trade. now trades are", self.trades)
-
     def _initialize_position_value(self):
         for trade in self.trades.itertuples():
-            print(trade)
-
             if trade.action == "buy":
                 self._handle_buy_trade(trade)
             elif trade.action == "sell":

@@ -97,14 +97,8 @@ class Portfolio:
 
     def new_trade(self, trade_data):
         trade = Trade(trade_data)
-        print(self.trades)
-        print("total cols: ", len(self.trades.columns))
-        print("total cols: ", len(trade.to_row()))
-        print("now adding\n", trade)
 
         self.trades.add(trade.to_row())
-
-        print(self.trades)
 
     def generate_email_body(self):
         position_columns = [
@@ -136,7 +130,6 @@ class Portfolio:
         real_pnl = 0
 
         for position in self.positions.values():
-            print(position)
             cost_basis += position.cost_basis
             market_value += position.mkt_value
             real_pnl += position.realized_pnl
