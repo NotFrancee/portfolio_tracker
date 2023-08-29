@@ -27,6 +27,9 @@ class App:
         """Function to edit the portfolio by adding trades"""
         print("WIP")
 
+    def save_data(self):
+        pass
+
     def run(self):
         """Runs the app"""
 
