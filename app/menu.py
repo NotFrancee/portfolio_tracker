@@ -5,7 +5,6 @@ from rich.style import Style
 import os
 from pynput import keyboard
 import time
-from classes.portfolio import Portfolio
 
 
 class OutOfIndexError(Exception):
@@ -29,9 +28,9 @@ class Menu:
         self, console: Console, title: str, options: dict[str, callable]
     ) -> None:
         """Inits the class. The function needs
-        i) the console object from the rich package,
-        ii) the title of the menu,
-        iii) the dictionary with option names and the function to call
+        * the console object from the rich package,
+        * the title of the menu,
+        * the dictionary with option names and the function to call
         """
 
         self.console = console
@@ -66,6 +65,10 @@ class Menu:
     # TODO
     def press_enter_to_continue(self):
         enter_pressed = False
+
+        def trigger_enter_pressed():
+            enter_pressed = True
+
         self.console.print(Markdown("_Press Enter to continue_"))
 
         while not enter_pressed:
@@ -75,7 +78,7 @@ class Menu:
                 print(key)
                 if key == keyboard.Key.enter:
                     print("enter key presse 2 ")
-                    enter_pressed = True
+                    trigger_enter_pressed()
                     kb_listener.stop()
 
             with keyboard.Listener(on_press=on_press) as kb_listener:
@@ -160,37 +163,3 @@ class Menu:
                 continue
 
             break
-
-
-class App:
-    """Class for the main App"""
-
-    def __init__(self) -> None:
-        """Here, specify the various menu options and initialize the variables"""
-
-        self.main_menu_options = {
-            "See Data": self.see_data,
-            "Edit Data": self.edit_data,
-        }
-
-        self.portfolio = Portfolio()
-        self.console = Console()
-        self.main_menu = Menu(self.console, "Main Menu", self.main_menu_options)
-
-    def see_data(self):
-        """Function to visualize data about the portfolio"""
-
-        self.portfolio.display_summary()
-
-    def edit_data(self):
-        """Function to edit the portfolio by adding trades"""
-        print("WIP")
-
-    def run(self):
-        """Runs the app"""
-
-        self.main_menu.run()
-
-
-app = App()
-app.run()
