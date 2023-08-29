@@ -28,9 +28,9 @@ class Menu:
         self, console: Console, title: str, options: dict[str, callable]
     ) -> None:
         """Inits the class. The function needs
-        * the console object from the rich package,
-        * the title of the menu,
-        * the dictionary with option names and the function to call
+        * The console object from the rich package,
+        * The title of the menu,
+        * The dictionary with option names and the function to call
         """
 
         self.console = console
