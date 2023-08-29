@@ -1,115 +1,62 @@
-from consolemenu.prompt_utils import PromptUtils
-from consolemenu.validators.base import BaseValidator
-from consolemenu import Screen
 from classes.portfolio import Portfolio
-import pandas as pd
-
-import time
 
 
-class TickerValidator(BaseValidator):
-    def validate(self, input_string: str) -> bool:
-        return len(input_string) < 5
+from rich.markdown import Markdown
+from rich.console import Console
+import six
+from abc import ABCMeta, abstractmethod
 
 
-class DateValidator(BaseValidator):
-    def validate(self, input_string: str) -> bool:
-        print(input_string)
+@six.add_metaclass(ABCMeta)
+class Validator:
+    def __init__(self) -> None:
+        pass
 
-        return True
-
-
-class CostValidator(BaseValidator):
-    def validate(self, input_string: str) -> bool:
-        return float(input_string) > 0
-
-
-def prompt_date(promptutil: PromptUtils):
-    validator = DateValidator()
-    try:
-        date_input = promptutil.input(
-            "Date: ", default=pd.Timestamp.today(), validators=validator
-        )
-
-        return pd.to_datetime(date_input.input_string)
-    except Exception as err:
-        print(err)
+    @abstractmethod
+    def validate(self, input: str):
+        """You must override this function. Return false is not valid, True if valid"""
+        pass
 
 
-def prompt_ticker(promptutil: PromptUtils):
-    validator = TickerValidator()
-    ticker_input = promptutil.input("Ticker: ", validators=validator)
-    ticker = ticker_input.input_string.upper().strip()
+class Prompt:
+    """Prompt Class"""
 
-    return ticker
+    def __init__(
+        self,
+        console: Console,
+        prompt_md: str,
+        input_type: type,
+        validator: Validator,
+    ) -> None:
+        self.console = console
+        self.prompt = Markdown(prompt_md)
+        self.input_type = input_type
+        self.validator = validator
+
+    def run(self):
+        inp = self.console.input(self.prompt)
+
+        is_valid = self.validator.validate(inp)
+
+        if is_valid:
+            return self.input_type(inp)
+        else:
+            print("an error occurred")
 
 
-def prompt_number(promptutil: PromptUtils, prompt: str):
-    validator = CostValidator()
-
-    prompt_input = promptutil.input(prompt, validators=validator)
-
-    return float(prompt_input.input_string)
+EXCHANGES = ["NYSE", "MIL", "NDQ"]
+BROKERS = ["IBKR", "Degiro"]
+CURRENCIES = ["USD", "EUR"]
+ACTIONS = ["buy", "sell"]
 
 
-def prompt_multiple_choice(
-    promptutil: PromptUtils, choices: list[str], title: str, prompt: str
-):
-    index = promptutil.prompt_for_numbered_choice(choices, title, prompt)
+class NewTradePrompter:
+    def __init__(self, portfolio: Portfolio) -> None:
+        self.portfolio = portfolio
 
-    return choices[index]
+    def run(self):
+        # date, ticker, exchange, broker, currency, action, amount, price, transaction costs, notes
 
+        trade_data = {}
 
-def new_trade_action(portfolio: Portfolio):
-    try:
-        exchanges = ["NYSE", "MIL", "NDQ"]
-        brokers = ["IBKR", "Degiro"]
-        currencies = ["USD", "EUR"]
-        actions = ["buy", "sell"]
-
-        screen = Screen()
-        promptutil = PromptUtils(screen)
-
-        date = prompt_date(promptutil)
-        ticker = prompt_ticker(promptutil)
-        exchange = prompt_multiple_choice(
-            promptutil, exchanges, "Exchange", "choose exchange"
-        )
-        broker = prompt_multiple_choice(
-            promptutil, brokers, "Broker", "choose exchange"
-        )
-        currency = prompt_multiple_choice(
-            promptutil, currencies, "Currency", "choose exchange"
-        )
-        action = prompt_multiple_choice(
-            promptutil, actions, "Action", "choose exchange"
-        )
-
-        amount = prompt_number(promptutil, "Amount: ")
-        price = prompt_number(promptutil, "Price: ")
-        transaction_costs = prompt_number(promptutil, "Transaction costs: ")
-
-        notes = ""
-
-        trade_data = {
-            "date": str(date.date()),
-            "ticker": ticker,
-            "exchange": exchange,
-            "broker": broker,
-            "currency": currency,
-            "action": action,
-            "amount": amount,
-            "price": price,
-            "transaction_costs": transaction_costs,
-            "notes": notes,
-        }
-
-        portfolio.new_trade(trade_data)
-
-        print("done, created trade")
-        print("now restart app")
-        promptutil.enter_to_continue()
-
-    except Exception as err:
-        print(err)
-        time.sleep(15)
+        self.portfolio.new_trade(trade_data)
