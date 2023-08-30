@@ -38,6 +38,35 @@ class DateValidator(Validator):
     """Validate dates"""
 
     def validate(self, input_str: str):
+        try:
+            pd.to_datetime(input_str, format="%Y-%m-%d")
+            return True
+        except ValueError:
+            print(
+                "Date was not in the right format. Please respect the format provided"
+            )
+            return False
+
+    def process(self, input_str: str):
+        return pd.to_datetime(input_str).date()
+
+
+class TickerValidator(Validator):
+    """Validate a ticker"""
+
+    def validate(self, input_str: str):
+        alphabet_pattern = "^[a-zA-Z]*$"
+
+        if 0 < len(input_str) < 5 and re.match(alphabet_pattern, input_str):
+            return True
+
+        print("ticker format not valid, try again")
+        return False
+
+    def process(self, input_str: str):
+        return input_str.upper()
+
+
 class NumericValidator(Validator):
     """Validate int/float inputs"""
 
