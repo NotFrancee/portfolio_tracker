@@ -10,19 +10,20 @@ class PromptInput:
         self,
         console: Console,
         prompt_md: str,
-        validator: Validator,
+        validator: Validator = None,
     ) -> None:
         self.console = console
         self.prompt = Markdown(prompt_md)
         self.validator = validator
 
     def run(self):
-        inp = self.console.input(self.prompt)
+        while True:
+            inp = self.console.input(self.prompt)
 
-        is_valid = self.validator.validate(inp)
+            if self.validator:
+                is_valid = self.validator.validate(inp)
 
-        if is_valid:
-            processed_input = self.validator.process(inp)
-            return processed_input
-        else:
-            print("an error occurred")
+                if is_valid:
+                    return self.validator.process(inp)
+            else:
+                return inp
