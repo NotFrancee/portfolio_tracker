@@ -1,5 +1,6 @@
 from classes.portfolio import Portfolio
 from app.menu import Menu
+from app.new_trade import NewTradePrompter
 from rich.console import Console
 
 
@@ -25,7 +26,8 @@ class App:
 
     def edit_data(self):
         """Function to edit the portfolio by adding trades"""
-        print("WIP")
+        new_trade_page = NewTradePrompter(self.portfolio, self.console)
+        new_trade_page.run()
 
     def save_data(self):
         pass

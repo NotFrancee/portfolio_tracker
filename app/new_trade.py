@@ -1,47 +1,6 @@
 from classes.portfolio import Portfolio
-
-
-from rich.markdown import Markdown
 from rich.console import Console
-import six
-from abc import ABCMeta, abstractmethod
-
-
-@six.add_metaclass(ABCMeta)
-class Validator:
-    def __init__(self) -> None:
-        pass
-
-    @abstractmethod
-    def validate(self, input: str):
-        """You must override this function. Return false is not valid, True if valid"""
-        pass
-
-
-class Prompt:
-    """Prompt Class"""
-
-    def __init__(
-        self,
-        console: Console,
-        prompt_md: str,
-        input_type: type,
-        validator: Validator,
-    ) -> None:
-        self.console = console
-        self.prompt = Markdown(prompt_md)
-        self.input_type = input_type
-        self.validator = validator
-
-    def run(self):
-        inp = self.console.input(self.prompt)
-
-        is_valid = self.validator.validate(inp)
-
-        if is_valid:
-            return self.input_type(inp)
-        else:
-            print("an error occurred")
+from app.prompt_input import PromptInput, Validator
 
 
 EXCHANGES = ["NYSE", "MIL", "NDQ"]
@@ -50,12 +9,28 @@ CURRENCIES = ["USD", "EUR"]
 ACTIONS = ["buy", "sell"]
 
 
+class DateValidator(Validator):
+    def validate(self, input: str):
+        return True
+
+    def process(self, input_str: str):
+        return True
+
+
 class NewTradePrompter:
-    def __init__(self, portfolio: Portfolio) -> None:
+    """Page to create a new trade"""
+
+    def __init__(self, portfolio: Portfolio, console: Console) -> None:
         self.portfolio = portfolio
+        self.console = console
 
     def run(self):
-        # date, ticker, exchange, broker, currency, action, amount, price, transaction costs, notes
+        # date, ticker, exchange, broker, currency, action, amount, price, transaction costs, notes+
+        date = PromptInput(
+            self.console, "Date (yyyy-mm-dd): ", DateValidator
+        ).run()
+
+        print(date)
 
         trade_data = {}
 
