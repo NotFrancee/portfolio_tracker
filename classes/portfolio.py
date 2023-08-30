@@ -96,11 +96,6 @@ class Portfolio:
     def display_summary(self):
         print(self.generate_email_body())
 
-    def new_trade(self, trade_data):
-        trade = Trade(trade_data)
-
-        self.trades.add(trade.to_row())
-
     def generate_email_body(self):
         position_columns = [
             "Amount",
@@ -176,3 +171,36 @@ class Portfolio:
 
             pickle.dump(data, f)
             print("Dumped Data\n", data)
+
+    def refresh(self):
+        pass
+
+    def new_trade(
+        self,
+        date: str,
+        ticker: str,
+        exchange: str,
+        broker: str,
+        action: str,
+        currency: str,
+        amount: str,
+        price: str,
+        transaction_costs: str,
+        notes: str,
+    ):
+        trade_data = {
+            "date": date,
+            "ticker": ticker,
+            "exchange": exchange,
+            "broker": broker,
+            "action": action,
+            "currency": currency,
+            "amount": amount,
+            "price": price,
+            "transaction_costs": transaction_costs,
+            "notes": notes,
+        }
+
+        trade = Trade(trade_data)
+
+        self.trades.add(trade.to_row())
