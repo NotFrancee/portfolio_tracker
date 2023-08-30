@@ -24,14 +24,15 @@ class Portfolio:
     Initializing pulls the trades from the xlsx file named "portfolio.xlsx"
     """
 
-    def __init__(self):
+    def __init__(self, pull_live_data=True):
         load_dotenv()
         self.market_interface = MarketInterface()
 
         self.trades = self._load_trades("./data/trades.csv")
         self.positions: dict[str, Position] = self._load_positions()
 
-        self.update_live_data()
+        if pull_live_data:
+            self.update_live_data()
 
     def _load_trades(self, path: str):
         # loads the trades from the csv
