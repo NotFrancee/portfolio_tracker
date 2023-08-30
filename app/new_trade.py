@@ -1,20 +1,12 @@
 from classes.portfolio import Portfolio
 from rich.console import Console
-from app.prompt_input import PromptInput, Validator
-
+from app.prompts.prompt_input import PromptInput
+from app.prompts.validators import DateValidator
 
 EXCHANGES = ["NYSE", "MIL", "NDQ"]
 BROKERS = ["IBKR", "Degiro"]
 CURRENCIES = ["USD", "EUR"]
 ACTIONS = ["buy", "sell"]
-
-
-class DateValidator(Validator):
-    def validate(self, input: str):
-        return True
-
-    def process(self, input_str: str):
-        return True
 
 
 class NewTradePrompter:

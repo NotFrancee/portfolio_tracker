@@ -28,7 +28,7 @@ class Portfolio:
         load_dotenv()
         self.market_interface = MarketInterface()
 
-        self.trades = self._load_trades("trades.csv")
+        self.trades = self._load_trades("./data/trades.csv")
         self.positions: dict[str, Position] = self._load_positions()
 
         self.update_live_data()
