@@ -58,13 +58,12 @@ class ExcelInterface:
     def dump_positions(self, positions: list[Position]):
         positions_ws_name = "Positions"
 
-        if positions_ws_name not in self.wb.sheetnames:
-            self.wb.create_sheet(positions_ws_name, 0)
-            ws = self.wb[positions_ws_name]
-            ws.append(Position.to_row_columns.values())
-        else:
-            ws = self.wb[positions_ws_name]
-            ws.delete_rows(2, ws.max_row)
+        if positions_ws_name in self.wb.sheetnames:
+            self.wb.remove_sheet(self.wb[positions_ws_name])
+
+        self.wb.create_sheet(positions_ws_name, 0)
+        ws = self.wb[positions_ws_name]
+        ws.append(list(Position.to_row_columns.values()))
 
         self.wb.active = ws
         for position in positions:

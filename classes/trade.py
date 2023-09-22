@@ -8,7 +8,10 @@ class Trade:
     required_params = {
         "date",
         "ticker",
+        "exchange",
+        "broker",
         "action",
+        "currency",
         "amount",
         "price",
         "transaction_costs",
@@ -17,8 +20,11 @@ class Trade:
     to_row_columns = {
         "date": "Date",
         "ticker": "Ticker",
+        "exchange": "Exchange",
+        "broker": "Broker",
         "action": "Action",
         "amount": "Amount",
+        "currency": "Currency",
         "price": "Price",
         "transaction_costs": "Transaction Costs",
         "cost_basis": "Cost Basis",
@@ -31,8 +37,11 @@ class Trade:
 
         self.date = trade_data["date"]
         self.ticker = trade_data["ticker"]
+        self.exchange = trade_data["exchange"]
+        self.broker = trade_data["broker"]
         self.action = trade_data["action"].lower()
         self.amount = float(trade_data["amount"])
+        self.currency = trade_data["currency"]
         self.price = float(trade_data["price"])
         self.transaction_costs = float(trade_data["transaction_costs"])
 
@@ -53,7 +62,7 @@ class Trade:
             f"Summary for {self.ticker} {self.action.upper()} trade on {self.date}"
         )
         res.append(
-            f"{self.amount} @ {self.price} (transaction costs: {self.transaction_costs})"
+            f"{self.amount} @ {self.currency} {self.price} (transaction costs: {self.transaction_costs})"
         )
         res.append(
             f"\tTotal Cost Basis: {self.cost_basis}\n\tUnit Cost Basis: {self.unit_cost_basis}"

@@ -6,6 +6,7 @@ class Position:
 
     to_row_columns = {
         "ticker": "Ticker",
+        "exchange": "Exchange",
         "broker": "Broker",
         "currency": "Currency",
         "amount": "Amount",
@@ -21,7 +22,7 @@ class Position:
     def __init__(
         self,
         ticker: str,
-        exchange_code: str,
+        exchange: str,
         broker: str,
         currency: str,
         initial_trades: pd.DataFrame,
@@ -30,7 +31,7 @@ class Position:
         self.trades = initial_trades.drop("ticker", axis=1)
 
         self.ticker = ticker
-        self.exchange_code = exchange_code
+        self.exchange = exchange
         self.currency = currency
         self.amount = 0
         self.cost_basis = 0
@@ -49,6 +50,7 @@ class Position:
     def _handle_buy_trade(self, trade):
         self.cost_basis += trade.cost_basis
         self.amount += trade.amount
+        self.unit_cost_basis = self.cost_basis / self.amount
 
     def _handle_sell_trade(self, trade):
         past_buy_trades: pd.DataFrame = self.trades[
@@ -59,6 +61,8 @@ class Position:
 
         remaining_quantity = trade.amount
 
+        trade_pnl = 0
+
         for previous_trade in past_buy_trades.itertuples():
             if previous_trade.amount <= remaining_quantity:
                 past_buy_trades.loc[previous_trade.Index, "open_amount"] = 0
@@ -67,7 +71,7 @@ class Position:
 
                 # book PnL
                 self.cost_basis -= previous_trade.cost_basis
-                trade_pnl = trade.cost_basis - previous_trade.cost_basis
+                trade_pnl += trade.cost_basis - previous_trade.cost_basis
                 self.realized_pnl += trade_pnl
                 self.unrealized_pnl -= trade_pnl
 
@@ -77,7 +81,7 @@ class Position:
                 ] -= remaining_quantity
 
                 self.cost_basis -= previous_trade.price * remaining_quantity
-                trade_pnl = (
+                trade_pnl += (
                     trade.cost_basis - previous_trade.price * remaining_quantity
                 )
                 self.realized_pnl += trade_pnl
